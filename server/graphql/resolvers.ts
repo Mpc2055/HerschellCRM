@@ -125,6 +125,55 @@ export const resolvers = {
   },
   
   Mutation: {
+    // New test email functionality
+    sendTestNewsletterCampaign: async (_: any, { id }: { id: string }) => {
+      try {
+        const campaignId = parseInt(id);
+        if (isNaN(campaignId)) {
+          throw new Error("Invalid campaign ID");
+        }
+        
+        // Get the campaign details
+        const campaign = await storage.getNewsletterCampaign(campaignId);
+        if (!campaign) {
+          throw new Error("Campaign not found");
+        }
+        
+        if (!process.env.SENDGRID_API_KEY) {
+          throw new Error("SendGrid API key not configured. Please set the SENDGRID_API_KEY environment variable.");
+        }
+        
+        // Import the sendNewsletterCampaign function from the sendgrid module
+        const { sendNewsletterCampaign } = await import('../sendgrid');
+        
+        // Use the configured sender email or a default one
+        const senderEmail = process.env.SENDER_EMAIL || 'noreply@herschellmuseum.org';
+        const senderName = 'Herschell Carrousel Factory Museum';
+        
+        // Send a test email (only to the first recipient in the audience)
+        const result = await sendNewsletterCampaign(
+          campaignId,
+          senderEmail,
+          senderName,
+          campaign.subject,
+          campaign.content,
+          true // In test mode
+        );
+        
+        return {
+          success: result.success,
+          message: result.success 
+            ? `Test email sent successfully to ${result.sent} recipient(s).`
+            : `Failed to send test email. ${result.failed} failures.`
+        };
+      } catch (error) {
+        console.error("GraphQL sendTestNewsletterCampaign mutation error:", error);
+        return {
+          success: false,
+          message: "Failed to send test newsletter: " + (error instanceof Error ? error.message : "Unknown error")
+        };
+      }
+    },
     createMember: async (_: any, { input }: { input: any }) => {
       try {
         return await storage.createMember(input);
@@ -204,19 +253,41 @@ export const resolvers = {
           throw new Error("Campaign not found");
         }
         
-        // Update campaign status to 'sent'
-        const updatedCampaign = await storage.updateNewsletterCampaign(campaignId, {
-          status: 'sent',
-          sentAt: new Date()
-        });
+        if (!process.env.SENDGRID_API_KEY) {
+          throw new Error("SendGrid API key not configured. Please set the SENDGRID_API_KEY environment variable.");
+        }
         
-        // Here we would trigger the actual sending via SendGrid
-        // This would be implemented in a separate function
+        // Import the sendNewsletterCampaign function from the sendgrid module
+        const { sendNewsletterCampaign } = await import('../sendgrid');
+        
+        // Use the configured sender email or a default one
+        const senderEmail = process.env.SENDER_EMAIL || 'noreply@herschellmuseum.org';
+        const senderName = 'Herschell Carrousel Factory Museum';
+        
+        // Send the newsletter campaign
+        const result = await sendNewsletterCampaign(
+          campaignId,
+          senderEmail,
+          senderName,
+          campaign.subject,
+          campaign.content,
+          false // Not in test mode
+        );
+        
+        if (!result.success) {
+          throw new Error(`Failed to send campaign. Sent: ${result.sent}, Failed: ${result.failed}`);
+        }
+        
+        // Get the updated campaign and return it
+        const updatedCampaign = await storage.getNewsletterCampaign(campaignId);
+        if (!updatedCampaign) {
+          throw new Error("Failed to retrieve updated campaign");
+        }
         
         return updatedCampaign;
       } catch (error) {
         console.error("GraphQL sendNewsletterCampaign mutation error:", error);
-        throw new Error("Failed to send newsletter campaign");
+        throw new Error("Failed to send newsletter campaign: " + (error instanceof Error ? error.message : "Unknown error"));
       }
     },
     

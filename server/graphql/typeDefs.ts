@@ -105,6 +105,11 @@ export const typeDefs = `#graphql
     newsletterCampaign(id: ID!): NewsletterCampaign
   }
 
+  type TestEmailResponse {
+    success: Boolean!
+    message: String!
+  }
+
   type Mutation {
     createMember(input: MemberInput!): Member
     updateMember(id: ID!, input: MemberInput!): Member
@@ -115,6 +120,7 @@ export const typeDefs = `#graphql
     createNewsletterCampaign(input: NewsletterCampaignInput!): NewsletterCampaign
     updateNewsletterCampaign(id: ID!, input: NewsletterCampaignInput!): NewsletterCampaign
     sendNewsletterCampaign(id: ID!): NewsletterCampaign
+    sendTestNewsletterCampaign(id: ID!): TestEmailResponse
     scheduleNewsletterCampaign(id: ID!, scheduledFor: String!): NewsletterCampaign
   }
 `;
