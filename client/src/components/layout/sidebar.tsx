@@ -35,29 +35,21 @@ const Sidebar: React.FC = () => {
       <nav className="px-2 py-4">
         <div className="mb-6">
           <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Main</p>
-          <Link href="/dashboard">
-            <a className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/dashboard' ? 'active' : 'hover:bg-gray-50'}`}>
-              <i className="fas fa-tachometer-alt mr-3 text-primary"></i>
-              Dashboard
-            </a>
+          <Link href="/dashboard" className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/dashboard' ? 'active' : 'hover:bg-gray-50'}`}>
+            <i className="fas fa-tachometer-alt mr-3 text-primary"></i>
+            Dashboard
           </Link>
-          <Link href="/members">
-            <a className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/members' || location.startsWith('/members/') ? 'active' : 'hover:bg-gray-50'}`}>
-              <i className="fas fa-users mr-3 text-muted-foreground"></i>
-              Members
-            </a>
+          <Link href="/members" className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/members' || location.startsWith('/members/') ? 'active' : 'hover:bg-gray-50'}`}>
+            <i className="fas fa-users mr-3 text-muted-foreground"></i>
+            Members
           </Link>
-          <Link href="/membership-tiers">
-            <a className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/membership-tiers' ? 'active' : 'hover:bg-gray-50'}`}>
-              <i className="fas fa-star mr-3 text-muted-foreground"></i>
-              Membership Tiers
-            </a>
+          <Link href="/membership-tiers" className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/membership-tiers' ? 'active' : 'hover:bg-gray-50'}`}>
+            <i className="fas fa-star mr-3 text-muted-foreground"></i>
+            Membership Tiers
           </Link>
-          <Link href="/transactions">
-            <a className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/transactions' ? 'active' : 'hover:bg-gray-50'}`}>
-              <i className="fas fa-exchange-alt mr-3 text-muted-foreground"></i>
-              Transactions
-            </a>
+          <Link href="/transactions" className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/transactions' ? 'active' : 'hover:bg-gray-50'}`}>
+            <i className="fas fa-exchange-alt mr-3 text-muted-foreground"></i>
+            Transactions
           </Link>
         </div>
         
