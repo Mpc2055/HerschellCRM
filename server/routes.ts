@@ -244,7 +244,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/members/:id', isAuthenticated, async (req, res) => {
     try {
-      const member = await storage.getMember(parseInt(req.params.id));
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid member ID" });
+      }
+      
+      const member = await storage.getMember(id);
       if (!member) {
         return res.status(404).json({ message: "Member not found" });
       }
@@ -342,7 +347,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/members/:id/transactions', isAuthenticated, async (req, res) => {
     try {
-      const transactions = await storage.getMemberTransactions(parseInt(req.params.id));
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid member ID" });
+      }
+      
+      const transactions = await storage.getMemberTransactions(id);
       return res.status(200).json(transactions);
     } catch (error) {
       console.error("Error fetching member transactions:", error);
@@ -352,7 +362,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/transactions/:id', isAuthenticated, async (req, res) => {
     try {
-      const transaction = await storage.getTransaction(parseInt(req.params.id));
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid transaction ID" });
+      }
+      
+      const transaction = await storage.getTransaction(id);
       if (!transaction) {
         return res.status(404).json({ message: "Transaction not found" });
       }
