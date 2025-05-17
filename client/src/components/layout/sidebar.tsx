@@ -55,34 +55,26 @@ const Sidebar: React.FC = () => {
         
         <div className="mb-6">
           <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Marketing</p>
-          <Link href="/newsletter">
-            <a className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/newsletter' ? 'active' : 'hover:bg-gray-50'}`}>
-              <i className="fas fa-envelope-open-text mr-3 text-muted-foreground"></i>
-              Newsletter
-            </a>
+          <Link href="/newsletter" className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/newsletter' ? 'active' : 'hover:bg-gray-50'}`}>
+            <i className="fas fa-envelope-open-text mr-3 text-muted-foreground"></i>
+            Newsletter
           </Link>
-          <Link href="/newsletter/campaigns">
-            <a className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/newsletter/campaigns' ? 'active' : 'hover:bg-gray-50'}`}>
-              <i className="fas fa-chart-line mr-3 text-muted-foreground"></i>
-              Campaign Reports
-            </a>
+          <Link href="/newsletter/campaigns" className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/newsletter/campaigns' ? 'active' : 'hover:bg-gray-50'}`}>
+            <i className="fas fa-chart-line mr-3 text-muted-foreground"></i>
+            Campaign Reports
           </Link>
         </div>
         
         {user?.role === 'manager' && (
           <div>
             <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Admin</p>
-            <Link href="/settings">
-              <a className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/settings' ? 'active' : 'hover:bg-gray-50'}`}>
-                <i className="fas fa-cog mr-3 text-muted-foreground"></i>
-                Settings
-              </a>
+            <Link href="/settings" className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/settings' ? 'active' : 'hover:bg-gray-50'}`}>
+              <i className="fas fa-cog mr-3 text-muted-foreground"></i>
+              Settings
             </Link>
-            <Link href="/users">
-              <a className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/users' ? 'active' : 'hover:bg-gray-50'}`}>
-                <i className="fas fa-users-cog mr-3 text-muted-foreground"></i>
-                User Management
-              </a>
+            <Link href="/users" className={`sidebar-item flex items-center px-4 py-2 text-sm font-medium rounded-md w-full mb-1 ${location === '/users' ? 'active' : 'hover:bg-gray-50'}`}>
+              <i className="fas fa-users-cog mr-3 text-muted-foreground"></i>
+              User Management
             </Link>
           </div>
         )}
