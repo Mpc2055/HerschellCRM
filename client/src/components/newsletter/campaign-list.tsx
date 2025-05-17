@@ -340,7 +340,7 @@ const CampaignList: React.FC = () => {
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Statuses</SelectItem>
+              <SelectItem key="all-statuses" value="">All Statuses</SelectItem>
               {CAMPAIGN_STATUSES.map((status) => (
                 <SelectItem key={status.id} value={status.id}>
                   {status.name}

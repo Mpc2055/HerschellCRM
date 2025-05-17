@@ -336,7 +336,7 @@ const MemberList: React.FC = () => {
                   <SelectValue placeholder="Filter by tier" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Tiers</SelectItem>
+                  <SelectItem key="all-tiers" value="">All Tiers</SelectItem>
                   {MEMBERSHIP_TIERS.map((tier) => (
                     <SelectItem key={tier.id} value={tier.id}>
                       {tier.name}

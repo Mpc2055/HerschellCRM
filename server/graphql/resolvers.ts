@@ -207,7 +207,7 @@ export const resolvers = {
         // Update campaign status to 'sent'
         const updatedCampaign = await storage.updateNewsletterCampaign(campaignId, {
           status: 'sent',
-          sentAt: new Date().toISOString()
+          sentAt: new Date()
         });
         
         // Here we would trigger the actual sending via SendGrid
