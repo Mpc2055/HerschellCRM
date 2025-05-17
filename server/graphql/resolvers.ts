@@ -122,5 +122,126 @@ export const resolvers = {
         return null;
       }
     }
+  },
+  
+  Mutation: {
+    createMember: async (_: any, { input }: { input: any }) => {
+      try {
+        return await storage.createMember(input);
+      } catch (error) {
+        console.error("GraphQL createMember mutation error:", error);
+        throw new Error("Failed to create member");
+      }
+    },
+    
+    updateMember: async (_: any, { id, input }: { id: string, input: any }) => {
+      try {
+        const memberId = parseInt(id);
+        if (isNaN(memberId)) {
+          throw new Error("Invalid member ID");
+        }
+        return await storage.updateMember(memberId, input);
+      } catch (error) {
+        console.error("GraphQL updateMember mutation error:", error);
+        throw new Error("Failed to update member");
+      }
+    },
+    
+    archiveMember: async (_: any, { id }: { id: string }) => {
+      try {
+        const memberId = parseInt(id);
+        if (isNaN(memberId)) {
+          throw new Error("Invalid member ID");
+        }
+        return await storage.archiveMember(memberId);
+      } catch (error) {
+        console.error("GraphQL archiveMember mutation error:", error);
+        throw new Error("Failed to archive member");
+      }
+    },
+    
+    createTransaction: async (_: any, { input }: { input: any }) => {
+      try {
+        return await storage.createTransaction(input);
+      } catch (error) {
+        console.error("GraphQL createTransaction mutation error:", error);
+        throw new Error("Failed to create transaction");
+      }
+    },
+    
+    createNewsletterCampaign: async (_: any, { input }: { input: any }) => {
+      try {
+        return await storage.createNewsletterCampaign(input);
+      } catch (error) {
+        console.error("GraphQL createNewsletterCampaign mutation error:", error);
+        throw new Error("Failed to create newsletter campaign");
+      }
+    },
+    
+    updateNewsletterCampaign: async (_: any, { id, input }: { id: string, input: any }) => {
+      try {
+        const campaignId = parseInt(id);
+        if (isNaN(campaignId)) {
+          throw new Error("Invalid campaign ID");
+        }
+        return await storage.updateNewsletterCampaign(campaignId, input);
+      } catch (error) {
+        console.error("GraphQL updateNewsletterCampaign mutation error:", error);
+        throw new Error("Failed to update newsletter campaign");
+      }
+    },
+    
+    sendNewsletterCampaign: async (_: any, { id }: { id: string }) => {
+      try {
+        const campaignId = parseInt(id);
+        if (isNaN(campaignId)) {
+          throw new Error("Invalid campaign ID");
+        }
+        
+        // Get the campaign details
+        const campaign = await storage.getNewsletterCampaign(campaignId);
+        if (!campaign) {
+          throw new Error("Campaign not found");
+        }
+        
+        // Update campaign status to 'sent'
+        const updatedCampaign = await storage.updateNewsletterCampaign(campaignId, {
+          status: 'sent',
+          sentAt: new Date().toISOString()
+        });
+        
+        // Here we would trigger the actual sending via SendGrid
+        // This would be implemented in a separate function
+        
+        return updatedCampaign;
+      } catch (error) {
+        console.error("GraphQL sendNewsletterCampaign mutation error:", error);
+        throw new Error("Failed to send newsletter campaign");
+      }
+    },
+    
+    scheduleNewsletterCampaign: async (_: any, { id, scheduledFor }: { id: string, scheduledFor: string }) => {
+      try {
+        const campaignId = parseInt(id);
+        if (isNaN(campaignId)) {
+          throw new Error("Invalid campaign ID");
+        }
+        
+        // Get the campaign details
+        const campaign = await storage.getNewsletterCampaign(campaignId);
+        if (!campaign) {
+          throw new Error("Campaign not found");
+        }
+        
+        // Update campaign status to 'scheduled'
+        return await storage.updateNewsletterCampaign(campaignId, {
+          status: 'scheduled',
+          scheduledFor
+        });
+      } catch (error) {
+        console.error("GraphQL scheduleNewsletterCampaign mutation error:", error);
+        throw new Error("Failed to schedule newsletter campaign");
+      }
+    }
   }
 };
