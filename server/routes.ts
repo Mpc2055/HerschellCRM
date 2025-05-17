@@ -27,12 +27,12 @@ import multer from 'multer';
 // Function to seed initial admin user
 async function seedAdminUser() {
   try {
-    const existingAdmin = await storage.getUserByEmail("Admin@test.com");
+    const existingAdmin = await storage.getUserByEmail("admin@herschellcrm.org");
     
     if (!existingAdmin) {
       await storage.createUser({
-        email: "Admin@test.com",
-        password: "admin", // This will be hashed by the createUser method
+        email: "admin@herschellcrm.org",
+        password: "admin123", // This will be hashed by the createUser method
         firstName: "Admin",
         lastName: "User",
         role: "manager"
