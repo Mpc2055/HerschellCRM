@@ -9,11 +9,10 @@ import {
   insertNewsletterCampaignSchema 
 } from "@shared/schema";
 import { sendEmail } from "./sendgrid";
-// GraphQL implementation will be added later
-// import { ApolloServer } from '@apollo/server';
-// import { expressMiddleware } from '@apollo/server/express4';
-// import { typeDefs } from "./graphql/typeDefs";
-// import { resolvers } from "./graphql/resolvers";
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import { typeDefs } from "./graphql/typeDefs";
+import { resolvers } from "./graphql/resolvers";
 import bcrypt from "bcrypt";
 import session from "express-session";
 import pgSession from "connect-pg-simple";
@@ -777,24 +776,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // GraphQL implementation will be added later
-  // const apolloServer = new ApolloServer({
-  //   typeDefs,
-  //   resolvers,
-  // });
+  // Initialize Apollo Server for GraphQL
+  const apolloServer = new ApolloServer({
+    typeDefs,
+    resolvers,
+  });
 
-  // await apolloServer.start();
+  await apolloServer.start();
 
-  /* GraphQL setup to be added later
   app.use(
     '/graphql',
     expressMiddleware(apolloServer, {
-      context: async ({ req }) => {
-        return { req, storage };
+      context: async ({ req, res }) => {
+        return { req, res };
       },
     })
   );
-  */
 
   const httpServer = createServer(app);
   return httpServer;
