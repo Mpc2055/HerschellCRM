@@ -455,11 +455,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/newsletter/campaigns', isAuthenticated, async (req, res) => {
     try {
-      const campaignData = insertNewsletterCampaignSchema.parse(req.body);
-      const newCampaign = await storage.createNewsletterCampaign({
-        ...campaignData,
+      const campaignData = insertNewsletterCampaignSchema.parse({
+        ...req.body,
         senderId: req.session.user.id
       });
+      const newCampaign = await storage.createNewsletterCampaign(campaignData);
       return res.status(201).json(newCampaign);
     } catch (error) {
       console.error("Error creating newsletter campaign:", error);
