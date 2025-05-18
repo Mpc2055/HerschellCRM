@@ -55,7 +55,11 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({ campaign, isEditing = f
     title: campaign?.title || "",
     subject: campaign?.subject || "",
     content: campaign?.content || NEWSLETTER_TEMPLATE,
-    audience: campaign?.audience ? JSON.parse(campaign.audience) : { tiers: [], tags: [], joinDateRange: null },
+    audience: campaign?.audience
+      ? typeof campaign.audience === "string"
+        ? JSON.parse(campaign.audience)
+        : campaign.audience
+      : { tiers: [], tags: [], joinDateStart: null, joinDateEnd: null },
   };
 
   // Initialize form with react-hook-form
