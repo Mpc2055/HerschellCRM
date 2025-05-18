@@ -6,22 +6,57 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+interface Member {
+  id: number;
+  firstName: string;
+  lastName: string;
+  tierId: string;
+  createdAt: string;
+}
+
+interface Transaction {
+  id: number;
+  memberId: number;
+  amount: number;
+  paymentMethod: string;
+  type: string;
+  date: string;
+}
+
+interface Campaign {
+  id: number;
+  title: string;
+  status: string;
+  sentAt: string | null;
+  createdAt: string;
+}
+
+interface Activity {
+  type: string;
+  icon: string;
+  iconColor: string;
+  title: string;
+  description: string;
+  date: Date;
+  memberId?: number;
+}
+
 export const RecentActivity: React.FC = () => {
   const [activityType, setActivityType] = React.useState<string>("all");
   
-  const { data: recentMembers } = useQuery({
+  const { data: recentMembers = [] } = useQuery<Member[]>({
     queryKey: ["/api/dashboard/recent-members", { limit: 5 }],
   });
   
-  const { data: recentTransactions } = useQuery({
+  const { data: recentTransactions = [] } = useQuery<Transaction[]>({
     queryKey: ["/api/dashboard/recent-transactions", { limit: 5 }],
   });
   
-  const { data: recentCampaigns } = useQuery({
+  const { data: recentCampaigns = [] } = useQuery<Campaign[]>({
     queryKey: ["/api/dashboard/recent-campaigns", { limit: 5 }],
   });
   
-  const isLoading = !recentMembers && !recentTransactions && !recentCampaigns;
+  const isLoading = recentMembers.length === 0 && recentTransactions.length === 0 && recentCampaigns.length === 0;
   
   if (isLoading) {
     return (
@@ -48,12 +83,12 @@ export const RecentActivity: React.FC = () => {
   }
   
   // Combine and format all activities
-  const formatActivities = () => {
-    const activities = [];
+  const formatActivities = (): Activity[] => {
+    const activities: Activity[] = [];
     
     // Add member activities
     if (recentMembers && (activityType === "all" || activityType === "members")) {
-      recentMembers.forEach((member: any) => {
+      recentMembers.forEach((member) => {
         activities.push({
           type: "member",
           icon: "user-plus",
@@ -67,7 +102,7 @@ export const RecentActivity: React.FC = () => {
     
     // Add transaction activities
     if (recentTransactions && (activityType === "all" || activityType === "transactions")) {
-      recentTransactions.forEach((transaction: any) => {
+      recentTransactions.forEach((transaction) => {
         let icon = "dollar-sign";
         let title = "Payment received";
         
@@ -96,7 +131,7 @@ export const RecentActivity: React.FC = () => {
     
     // Add campaign activities
     if (recentCampaigns && (activityType === "all" || activityType === "campaigns")) {
-      recentCampaigns.forEach((campaign: any) => {
+      recentCampaigns.forEach((campaign) => {
         let icon = "envelope";
         let title = "Newsletter created";
         
@@ -141,8 +176,8 @@ export const RecentActivity: React.FC = () => {
   
   return (
     <Card>
-      <CardHeader className="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-        <CardTitle className="text-lg font-medium text-gray-900">Recent Activity</CardTitle>
+      <CardHeader className="border-b border-border px-6 py-4 flex justify-between items-center">
+        <CardTitle className="text-lg font-medium text-foreground">Recent Activity</CardTitle>
         <Select value={activityType} onValueChange={setActivityType}>
           <SelectTrigger className="h-8 w-[160px]">
             <SelectValue placeholder="All Activities" />
@@ -163,20 +198,20 @@ export const RecentActivity: React.FC = () => {
                 <div className="relative pb-8">
                   {index < activities.length - 1 ? (
                     <span 
-                      className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200" 
+                      className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-border" 
                       aria-hidden="true"
                     ></span>
                   ) : null}
                   <div className="relative flex items-start space-x-3">
                     <div className="relative">
-                      <div className={`h-10 w-10 rounded-full ${getIconColorClass(activity.iconColor)} flex items-center justify-center ring-8 ring-white`}>
+                      <div className={`h-10 w-10 rounded-full ${getIconColorClass(activity.iconColor)} flex items-center justify-center ring-8 ring-card`}>
                         <i className={`fas fa-${activity.icon}`}></i>
                       </div>
                     </div>
                     <div className="min-w-0 flex-1">
                       <div>
                         <div className="text-sm">
-                          <a href="#" className="font-medium text-gray-900">{activity.title}</a>
+                          <a href="#" className="font-medium text-foreground">{activity.title}</a>
                         </div>
                         <p className="mt-0.5 text-sm text-muted-foreground">
                           {activity.description}

@@ -443,9 +443,11 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ id }) => {
               <CardContent>
                 <ul className="space-y-2 list-disc list-inside text-sm">
                   {tierInfo ? (
-                    JSON.parse(String(tierInfo.benefits)).map((benefit: string, index: number) => (
-                      <li key={index}>{benefit}</li>
-                    ))
+                    tierInfo.benefits ? 
+                      JSON.parse(String(tierInfo.benefits)).map((benefit: string, index: number) => (
+                        <li key={index}>{benefit}</li>
+                      ))
+                    : <li className="text-muted-foreground">No specific benefits listed for this tier</li>
                   ) : (
                     <li className="text-muted-foreground">Benefits information not available</li>
                   )}

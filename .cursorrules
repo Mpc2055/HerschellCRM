@@ -1,0 +1,24 @@
+# Herschell CRM Project Rules
+
+## Important Notes
+
+1. **DO NOT run `npm run dev`** - This project is running in a Replit environment and should only be operated using Replit's built-in tools and interfaces.
+
+2. **Use the Replit interface** - View and interact with the application through the Replit preview window.
+
+3. **API development** - When developing new API endpoints, test them using the built-in API testing tools or the application interface.
+
+4. **Database access** - Database operations should be performed through the application's models and controllers.
+
+## Project Structure
+
+- `client/` - Frontend React application with TypeScript
+- `server/` - Backend Express API
+- `prisma/` - Database schema and migrations
+- `shared/` - Shared types and utilities
+
+## Common Issues
+
+- JSON parsing errors may occur when data is undefined or null
+- Always check for existence of properties before parsing
+- Use conditional rendering to handle empty states 

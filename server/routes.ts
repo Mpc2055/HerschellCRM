@@ -776,6 +776,101 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Dashboard stats endpoint
+  app.get('/api/dashboard/stats', isAuthenticated, async (req, res) => {
+    try {
+      // Get total members
+      const members = await storage.getMembers({});
+      const totalMembers = members.length;
+      
+      // Get new members in last 30 days
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const newMembers = members.filter(member => new Date(member.joinDate) >= thirtyDaysAgo).length;
+      
+      // Get renewals due in next 30 days
+      const thirtyDaysFromNow = new Date();
+      thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+      const renewalsDue = members.filter(member => 
+        new Date(member.renewalDate) <= thirtyDaysFromNow && 
+        new Date(member.renewalDate) >= new Date()
+      ).length;
+      
+      // Get revenue for current month (from transactions)
+      const transactions = await storage.getTransactions();
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+      
+      const mtdTransactions = transactions.filter(transaction => 
+        new Date(transaction.date) >= startOfMonth
+      );
+      
+      const revenue = mtdTransactions.reduce((total, transaction) => 
+        total + Number(transaction.amount), 0
+      );
+      
+      // Stats calculations
+      const previousMonthMembers = members.filter(member => {
+        const joinDate = new Date(member.joinDate);
+        const sixtyDaysAgo = new Date();
+        sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+        return joinDate >= sixtyDaysAgo && joinDate < thirtyDaysAgo;
+      }).length;
+      
+      // Calculate percentages
+      const memberChange = previousMonthMembers === 0 
+        ? 100 
+        : Math.round(((newMembers - previousMonthMembers) / previousMonthMembers) * 100);
+      
+      const previousMonthRenewalsDue = members.filter(member => {
+        const renewalDate = new Date(member.renewalDate);
+        const sixtyDaysAgo = new Date();
+        sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        return renewalDate >= sixtyDaysAgo && renewalDate < thirtyDaysAgo;
+      }).length;
+      
+      const renewalsChange = previousMonthRenewalsDue === 0
+        ? 0
+        : Math.round(((renewalsDue - previousMonthRenewalsDue) / previousMonthRenewalsDue) * 100);
+        
+      // Get previous month's transactions for comparison
+      const previousMonth = new Date();
+      previousMonth.setMonth(previousMonth.getMonth() - 1);
+      const startOfPreviousMonth = new Date(previousMonth.getFullYear(), previousMonth.getMonth(), 1);
+      const endOfPreviousMonth = new Date(previousMonth.getFullYear(), previousMonth.getMonth() + 1, 0);
+      
+      const previousMonthTransactions = transactions.filter(transaction =>
+        new Date(transaction.date) >= startOfPreviousMonth && 
+        new Date(transaction.date) <= endOfPreviousMonth
+      );
+      
+      const previousMonthRevenue = previousMonthTransactions.reduce(
+        (total, transaction) => total + Number(transaction.amount), 0
+      );
+      
+      const revenueChange = previousMonthRevenue === 0
+        ? 100
+        : Math.round(((revenue - previousMonthRevenue) / previousMonthRevenue) * 100);
+      
+      return res.status(200).json({
+        totalMembers,
+        totalMembersChange: Math.round((newMembers / (totalMembers === 0 ? 1 : totalMembers)) * 100),
+        newMembers,
+        newMembersChange: memberChange,
+        renewalsDue,
+        renewalsDueChange: renewalsChange,
+        revenue: revenue.toFixed(2),
+        revenueChange
+      });
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
+      return res.status(500).json({ message: "Failed to fetch dashboard stats" });
+    }
+  });
+
   // Initialize Apollo Server for GraphQL
   const apolloServer = new ApolloServer({
     typeDefs,

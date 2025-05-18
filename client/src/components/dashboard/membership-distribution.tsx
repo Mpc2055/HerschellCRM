@@ -5,8 +5,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Pie } from "react-chartjs-2";
 import { MEMBERSHIP_TIERS } from "@/lib/constants";
 
+interface DistributionItem {
+  tierId: string;
+  count: number;
+}
+
 export const MembershipDistribution: React.FC = () => {
-  const { data: distribution, isLoading } = useQuery({
+  const { data: distribution = [], isLoading } = useQuery<DistributionItem[]>({
     queryKey: ["/api/dashboard/membership-distribution"],
   });
 
@@ -39,20 +44,20 @@ export const MembershipDistribution: React.FC = () => {
     return acc;
   }, {} as Record<string, string>);
 
-  const formattedData = distribution?.map((item: any) => ({
+  const formattedData = distribution.map((item) => ({
     ...item,
     tierId: tierMap[item.tierId] || item.tierId,
   }));
 
   // Calculate total for percentage
-  const total = formattedData?.reduce((sum: number, item: any) => sum + parseInt(item.count), 0) || 0;
+  const total = formattedData.reduce((sum, item) => sum + parseInt(item.count.toString()), 0) || 0;
 
   // Chart data
   const chartData = {
-    labels: formattedData?.map((item: any) => item.tierId) || [],
+    labels: formattedData.map((item) => item.tierId) || [],
     datasets: [
       {
-        data: formattedData?.map((item: any) => item.count) || [],
+        data: formattedData.map((item) => item.count) || [],
         backgroundColor: [
           'hsl(var(--chart-1))',
           'hsl(var(--chart-2))',
@@ -89,8 +94,8 @@ export const MembershipDistribution: React.FC = () => {
 
   return (
     <Card>
-      <CardHeader className="border-b border-gray-200">
-        <CardTitle className="text-lg font-medium text-gray-900">Membership Distribution</CardTitle>
+      <CardHeader className="border-b border-border">
+        <CardTitle className="text-lg font-medium text-foreground">Membership Distribution</CardTitle>
       </CardHeader>
       <CardContent className="p-6">
         <div className="relative pb-5">
@@ -99,14 +104,14 @@ export const MembershipDistribution: React.FC = () => {
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4 mt-4">
-          {formattedData?.map((item: any, index: number) => (
+          {formattedData.map((item, index) => (
             <div key={item.tierId} className="flex items-center justify-between">
               <div className="flex items-center">
                 <span className={`w-3 h-3 rounded-full ${getColorForIndex(index)} block mr-2`}></span>
-                <span className="text-sm text-gray-900">{item.tierId}</span>
+                <span className="text-sm text-foreground">{item.tierId}</span>
               </div>
               <div className="text-sm font-medium">
-                <span className="text-gray-900">{item.count}</span>
+                <span className="text-foreground">{item.count}</span>
                 <span className="text-muted-foreground ml-1">({Math.round((item.count / total) * 100)}%)</span>
               </div>
             </div>

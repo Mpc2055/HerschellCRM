@@ -15,6 +15,7 @@ import Login from "@/pages/login";
 import Dashboard from "@/pages/dashboard";
 import Members from "@/pages/members";
 import MemberDetail from "@/pages/member-detail";
+import NewMember from "@/pages/new-member";
 import MembershipTiers from "@/pages/membership-tiers";
 import Transactions from "@/pages/transactions";
 import Newsletter from "@/pages/newsletter";
@@ -80,6 +81,12 @@ function Router() {
       <Route path="/members">
         <Layout>
           <ProtectedRoute component={Members} />
+        </Layout>
+      </Route>
+      
+      <Route path="/members/new">
+        <Layout>
+          <ProtectedRoute component={NewMember} />
         </Layout>
       </Route>
       

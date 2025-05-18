@@ -20,10 +20,21 @@ interface RenewalsDueWidgetProps {
   limit?: number;
 }
 
+// Define the type for a renewal item
+interface Renewal {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  tierId: string;
+  renewalDate: string;
+  daysLeft?: number;
+}
+
 export const RenewalsDueWidget: React.FC<RenewalsDueWidgetProps> = ({ limit = 5 }) => {
   const [dayRange, setDayRange] = React.useState<string>("30");
 
-  const { data: renewals, isLoading } = useQuery({
+  const { data: renewals = [], isLoading } = useQuery<Renewal[]>({
     queryKey: [`/api/members/renewals/due?days=${dayRange}`],
   });
 
@@ -50,7 +61,7 @@ export const RenewalsDueWidget: React.FC<RenewalsDueWidgetProps> = ({ limit = 5 
     );
   }
 
-  const formattedRenewals = renewals?.slice(0, limit).map((renewal: any) => {
+  const formattedRenewals = renewals.slice(0, limit).map((renewal: Renewal) => {
     const daysLeft = differenceInDays(new Date(renewal.renewalDate), new Date());
     return {
       ...renewal,
@@ -70,9 +81,9 @@ export const RenewalsDueWidget: React.FC<RenewalsDueWidgetProps> = ({ limit = 5 
 
   return (
     <Card>
-      <CardHeader className="border-b border-gray-200 px-6 py-4">
+      <CardHeader className="border-b border-border px-6 py-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-medium text-gray-900">Upcoming Membership Renewals</CardTitle>
+          <CardTitle className="text-lg font-medium text-foreground">Upcoming Membership Renewals</CardTitle>
           <div>
             <Select value={dayRange} onValueChange={setDayRange}>
               <SelectTrigger className="h-8 w-[130px]">
@@ -100,9 +111,9 @@ export const RenewalsDueWidget: React.FC<RenewalsDueWidgetProps> = ({ limit = 5 
               </TableRow>
             </TableHeader>
             <TableBody>
-              {formattedRenewals?.length ? (
-                formattedRenewals.map((renewal: any) => (
-                  <TableRow key={renewal.id} className="hover:bg-gray-50">
+              {formattedRenewals.length ? (
+                formattedRenewals.map((renewal) => (
+                  <TableRow key={renewal.id} className="hover:bg-muted/50">
                     <TableCell className="px-3 py-3 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-8 w-8">
@@ -113,20 +124,20 @@ export const RenewalsDueWidget: React.FC<RenewalsDueWidgetProps> = ({ limit = 5 
                           </div>
                         </div>
                         <div className="ml-3">
-                          <div className="text-sm font-medium text-gray-900">{renewal.firstName} {renewal.lastName}</div>
+                          <div className="text-sm font-medium text-foreground">{renewal.firstName} {renewal.lastName}</div>
                           <div className="text-xs text-muted-foreground">{renewal.email}</div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell className="px-3 py-3 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{renewal.tierId.replace("_", " ").charAt(0).toUpperCase() + renewal.tierId.replace("_", " ").slice(1)}</div>
+                      <div className="text-sm text-foreground">{renewal.tierId.replace("_", " ").charAt(0).toUpperCase() + renewal.tierId.replace("_", " ").slice(1)}</div>
                     </TableCell>
                     <TableCell className="px-3 py-3 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{format(new Date(renewal.renewalDate), 'MMM dd, yyyy')}</div>
+                      <div className="text-sm text-foreground">{format(new Date(renewal.renewalDate), 'MMM dd, yyyy')}</div>
                       <div className="text-xs text-red-500">{renewal.daysLeft} days left</div>
                     </TableCell>
                     <TableCell className="px-3 py-3 whitespace-nowrap">
-                      {getStatusBadge(renewal.daysLeft)}
+                      {getStatusBadge(renewal.daysLeft!)}
                     </TableCell>
                     <TableCell className="px-3 py-3 whitespace-nowrap text-right text-sm font-medium">
                       <Link href={`/members/${renewal.id}`} className="text-primary hover:text-primary/80">
@@ -146,11 +157,11 @@ export const RenewalsDueWidget: React.FC<RenewalsDueWidgetProps> = ({ limit = 5 
           </Table>
         </div>
       </CardContent>
-      {formattedRenewals?.length > 0 && (
-        <CardFooter className="bg-gray-50 px-4 py-3 border-t border-gray-200 sm:px-6">
+      {formattedRenewals.length > 0 && (
+        <CardFooter className="bg-muted/50 px-4 py-3 border-t border-border sm:px-6">
           <div className="flex items-center justify-between w-full">
             <div className="text-sm text-muted-foreground">
-              Showing <span className="font-medium">{formattedRenewals.length}</span> of <span className="font-medium">{renewals?.length || 0}</span> renewals
+              Showing <span className="font-medium">{formattedRenewals.length}</span> of <span className="font-medium">{renewals.length || 0}</span> renewals
             </div>
             <Link href="/members?renewalDue=true">
               <Button variant="link" className="text-sm font-medium text-primary hover:text-primary/80">

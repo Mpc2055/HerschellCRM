@@ -75,7 +75,7 @@ const MemberList: React.FC = () => {
   };
 
   // Fetch members with filters
-  const { data: members, isLoading, isError } = useQuery({
+  const { data: members = [], isLoading, isError } = useQuery<Member[]>({
     queryKey: [`/api/members?${getQueryParams()}`],
   });
   
@@ -318,12 +318,12 @@ const MemberList: React.FC = () => {
               className="max-w-xs"
             />
             <div className="flex flex-wrap gap-4">
-              <Select value={statusFilter || ""} onValueChange={(value) => setStatusFilter(value || undefined)}>
+              <Select value={statusFilter || "all"} onValueChange={(value) => setStatusFilter(value === "all" ? undefined : value)}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem key="all-statuses" value="">All Statuses</SelectItem>
+                  <SelectItem key="all-statuses" value="all">All Statuses</SelectItem>
                   {MEMBER_STATUSES.map((status) => (
                     <SelectItem key={status.id} value={status.id}>
                       {status.name}
@@ -331,12 +331,12 @@ const MemberList: React.FC = () => {
                   ))}
                 </SelectContent>
               </Select>
-              <Select value={tierFilter || ""} onValueChange={(value) => setTierFilter(value || undefined)}>
+              <Select value={tierFilter || "all"} onValueChange={(value) => setTierFilter(value === "all" ? undefined : value)}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Filter by tier" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem key="all-tiers" value="">All Tiers</SelectItem>
+                  <SelectItem key="all-tiers" value="all">All Tiers</SelectItem>
                   {MEMBERSHIP_TIERS.map((tier) => (
                     <SelectItem key={tier.id} value={tier.id}>
                       {tier.name}
